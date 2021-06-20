@@ -20,6 +20,7 @@ type User {
   id: Float!
   name: String!
   email: String!
+  verified: Boolean!
   todos: [Todo!]!
 }
 
@@ -29,6 +30,7 @@ type Query {
 
 type Mutation {
   createUser(password: String!, email: String!, name: String!): User!
+  verifyUser(code: String!): User!
   createTodo(content: String!, title: String!): Todo!
   markDone(done: Boolean!, id: Float!): Todo!
 }

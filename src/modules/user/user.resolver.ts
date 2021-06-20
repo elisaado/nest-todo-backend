@@ -10,7 +10,11 @@ import { User } from 'src/models/user.model';
 import { UserService } from './user.service';
 import { TodoService } from '../todo/todo.service';
 import { Todo } from 'src/models/todo.model';
-import { UseGuards } from '@nestjs/common';
+import {
+  NotFoundException,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { GqlJWTAuthGuard } from '../auth/jwt.guard';
 import { CurrentUser } from 'src/decorators/user-decorator';
 
@@ -42,5 +46,13 @@ export class UserResolver {
     @Args('password') password: string,
   ) {
     return await this.userService.create(email, name, password);
+  }
+
+  @Mutation((returns) => User)
+  @UseGuards(GqlJWTAuthGuard)
+  async verifyUser(@Args('code') code: string, @CurrentUser() user: User) {
+    const success = await this.userService.verify(code, user.id);
+    if (!success) throw new NotFoundException(); // user with code combination not found
+    return await this.userService.findById(user.id);
   }
 }

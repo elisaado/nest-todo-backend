@@ -1,4 +1,9 @@
-import { UseGuards } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import {
   Resolver,
   Query,
@@ -24,6 +29,15 @@ export class TodoResolver {
     @Args({ name: 'title' }) title: string,
     @Args({ name: 'content' }) content: string,
   ) {
+    if (!user.verified) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'Email not verified',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
     return await this.todoService.create({ title, content, user });
   }
 

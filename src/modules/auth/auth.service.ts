@@ -7,7 +7,6 @@ import { UserService } from '../user/user.service';
 import { compare } from 'bcrypt';
 import { User } from '.prisma/client';
 import { JwtService } from '@nestjs/jwt';
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,10 +14,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User> {
+  async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
+
     if (!user || !(await compare(password, user.password))) return null;
-    console.log(user);
     return user;
   }
 
