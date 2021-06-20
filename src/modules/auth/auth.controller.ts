@@ -11,4 +11,10 @@ export class AuthController {
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
+
+  @UseGuards(AuthGuard('jwt-refresh'))
+  @Post('/refresh')
+  async refresh(@Request() req) {
+    return this.authService.login(req.user);
+  }
 }

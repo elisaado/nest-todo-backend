@@ -6,22 +6,23 @@ import * as config from '../../../config.json';
 import * as passport from 'passport';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: config.JWTSecret,
     });
-    passport.use('jwt', this);
+
+    passport.use('jwt-refresh', this);
   }
 
   async validate(payload: any) {
-    if (payload.type !== 'access')
+    if (payload.type !== 'refresh')
       throw new HttpException(
         {
           status: HttpStatus.UNAUTHORIZED,
-          error: 'Not an access token',
+          error: 'Not a refresh token',
         },
         HttpStatus.UNAUTHORIZED,
       );

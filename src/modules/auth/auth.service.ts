@@ -1,11 +1,6 @@
-import {
-  HttpException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { compare } from 'bcrypt';
-import { User } from '.prisma/client';
 import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
@@ -22,9 +17,13 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+    const accessToken = { type: 'access', email: user.email, sub: user.id };
+    const refreshToken = { type: 'refresh', email: user.email, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(accessToken),
+      refresh_token: this.jwtService.sign(refreshToken, {
+        expiresIn: '1 year',
+      }),
     };
   }
 }
